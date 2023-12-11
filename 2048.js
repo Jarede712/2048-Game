@@ -34,6 +34,70 @@ function setGame() {
             document.getElementById('board').append(tile);
         }
     }
+
+    // set two random tiles to 2 or 4 at the start of the game
+    setTwo();
+    setTwo();
+}
+
+function checkGameOver() {
+    if (!hasEmptyTile()) {
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < columns; c++) {
+                if (c !== columns - 1 && board[r][c] === board[r][c + 1]) {
+                    return false;
+                }
+                if (r !== rows - 1 && board[r][c] === board[r + 1][c]) {
+                    return false;
+                }
+            }
+        }
+        return true; // No moves left
+    }
+    return false; // There are empty tiles
+}
+
+document.addEventListener('keyup', (e) => {
+    if (e.code == "ArrowLeft" || e.code == "ArrowRight" || e.code == "ArrowUp" || e.code == "ArrowDown") {
+        if (checkGameOver()) {
+            // Game over logic here
+            alert("Game Over! - Refresh to play again!");
+            return; // Stop further actions
+        }
+    }
+});
+
+
+function hasEmptyTile() {
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++){
+            if (board[r][c] == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// this will set a random tile to 2 or 4
+function setTwo() {
+    if (!hasEmptyTile()) {
+        return;
+    }
+
+    let found = false;
+    while (!found) {
+        let r = Math.floor(Math.random() * rows); // random number between 0 and 3
+        let c = Math.floor(Math.random() * columns); // random number between 0 and 3
+
+        if (board[r][c] == 0) {
+            board[r][c] = 2;
+            let tile = document.getElementById(r.toString() + '-' + c.toString());
+            tile.innerText = '2';
+            tile.classList.add('x2');
+            found = true;
+        }
+    }
 }
 
 function updateTile(tile, num) {
@@ -53,16 +117,21 @@ function updateTile(tile, num) {
 document.addEventListener('keyup', (e) => {
     if (e.code == "ArrowLeft") {
         slideLeft();
+        setTwo();
     } 
     else if (e.code == "ArrowRight") {
         slideRight();
+        setTwo();
     }
     else if (e.code == "ArrowUp") {
         slideUp();
+        setTwo();
     }
     else if (e.code == 'ArrowDown') {
         slideDown();
+        setTwo();
     }
+    document.getElementById('score').innerText = score;
 })
 
 function filerZero(row) {
